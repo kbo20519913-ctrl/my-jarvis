@@ -2,6 +2,7 @@ import type { Config } from '@netlify/functions'
 import { requireUser } from './_shared/auth.ts'
 import { errorResponse, json } from './_shared/env.ts'
 import { upbitTickers, yahooChart } from './_shared/market-data.ts'
+import { num, tossConfigured, tossPrices } from './_shared/toss.ts'
 
 export default async (req: Request) => {
   if (req.method !== 'GET') return json({ error: 'Method not allowed' }, 405)
@@ -17,8 +18,31 @@ export default async (req: Request) => {
       .map((s) => s.trim())
       .filter(Boolean)
 
+    const tossMap = new Map<string, { price: number | null; currency: string }>()
+    if (tossConfigured() && stocks.length) {
+      try {
+        const toss = await tossPrices(stocks)
+        for (const row of toss) {
+          tossMap.set(row.symbol, { price: num(row.lastPrice), currency: row.currency })
+        }
+      } catch {
+        /* fall back to Yahoo per symbol */
+      }
+    }
+
     const stockQuotes = await Promise.all(
       stocks.map(async (raw) => {
+        const tossHit = tossMap.get(raw)
+        if (tossHit?.price != null) {
+          return {
+            symbol: raw,
+            resolved: raw,
+            kind: 'equity' as const,
+            price: tossHit.price,
+            changePct: null as number | null,
+            currency: tossHit.currency,
+          }
+        }
         const symbol = /^\d{6}$/.test(raw) ? `${raw}.KS` : raw
         try {
           const chart = await yahooChart(symbol, '5d')

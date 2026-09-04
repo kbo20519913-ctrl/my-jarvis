@@ -1,4 +1,4 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import {
   Bitcoin,
   CandlestickChart,
@@ -17,7 +17,7 @@ import { BrandLogo } from './BrandLogo.tsx'
 import { YoutubeStrip } from './YoutubeStrip.tsx'
 
 const NAV = [
-  { to: '/', label: '시황', icon: LayoutDashboard, end: true },
+  { to: '/', label: '홈', icon: LayoutDashboard, end: true },
   { to: '/market/world', label: '세계', icon: Earth },
   { to: '/market/korea', label: '한국', icon: Landmark },
   { to: '/market/stocks', label: '주식·펀드', icon: CandlestickChart },
@@ -31,6 +31,7 @@ const NAV = [
 export function AppShell() {
   const { profile, signOut, isAdmin } = useAuth()
   const name = profile?.nickname || profile?.display_name || '사용자'
+  const home = useLocation().pathname === '/'
 
   return (
     <div className="flex min-h-[100dvh] bg-ink text-paper">
@@ -83,7 +84,7 @@ export function AppShell() {
         </div>
       </aside>
       <div className="flex min-w-0 flex-1 flex-col bg-ink">
-        <YoutubeStrip />
+        {home ? null : <YoutubeStrip />}
         <header className="flex h-14 items-center justify-between border-b border-line bg-white px-4">
           <p className="truncate text-[15px] text-body">
             {profile?.one_liner || '오늘의 시황을 근거와 함께'}

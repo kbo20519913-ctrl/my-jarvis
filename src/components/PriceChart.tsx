@@ -14,23 +14,29 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip,
 export function PriceChart({
   candles,
   label,
+  convention = 'intl',
+  compact = false,
 }: {
   candles: Array<{ t: number; c: number }>
   label: string
+  convention?: 'intl' | 'kr'
+  compact?: boolean
 }) {
   if (!candles.length) {
     return <p className="text-sm text-mute">차트 데이터가 없습니다.</p>
   }
   const labels = candles.map((c) =>
-    new Date(c.t).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }),
+    compact
+      ? new Date(c.t).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })
+      : new Date(c.t).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }),
   )
   const first = candles[0].c
   const last = candles[candles.length - 1].c
   const up = last >= first
-  const color = up ? '#1f8a4c' : '#e42939'
+  const color = convention === 'kr' ? (up ? '#f04452' : '#3182f6') : up ? '#1f8a4c' : '#e42939'
 
   return (
-    <div className="h-64">
+    <div className={compact ? 'h-full' : 'h-64'}>
       <Line
         data={{
           labels,

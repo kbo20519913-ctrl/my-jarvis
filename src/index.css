@@ -173,6 +173,58 @@ textarea.field-box {
   background: #ffffff;
 }
 
+.price-up {
+  color: #f04452;
+}
+
+.price-down {
+  color: #3182f6;
+}
+
+.price-up-pill {
+  background: #fff1f2;
+  color: #f04452;
+}
+
+.price-down-pill {
+  background: #e8f3ff;
+  color: #3182f6;
+}
+
+.board-chip {
+  height: 32px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--color-body);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.board-chip[data-on='true'] {
+  background: var(--color-panel);
+  color: var(--color-paper);
+}
+
+.board-tab {
+  height: 40px;
+  padding: 0 4px 10px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--color-mute);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.board-tab[data-on='true'] {
+  border-bottom-color: var(--color-paper);
+  color: var(--color-paper);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
